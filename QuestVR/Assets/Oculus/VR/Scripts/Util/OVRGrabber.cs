@@ -191,7 +191,8 @@ public class OVRGrabber : MonoBehaviour
     {
         // Get the grab trigger
 		OVRGrabbable grabbable = otherCollider.GetComponent<OVRGrabbable>() ?? otherCollider.GetComponentInParent<OVRGrabbable>();
-        if (grabbable == null) return;
+        //added || grabbable.tag == "Weapon"
+        if (grabbable == null || grabbable.tag == "Weapon") return;
 
         // Add the grabbable
         int refCount = 0;

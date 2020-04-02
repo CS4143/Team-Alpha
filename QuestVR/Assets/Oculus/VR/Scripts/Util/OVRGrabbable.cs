@@ -22,6 +22,9 @@ using UnityEngine;
 /// </summary>
 public class OVRGrabbable : MonoBehaviour
 {
+    public Vector3 PickPosition;
+    public Vector3 PickRotation;
+
     [SerializeField]
     protected bool m_allowOffhandGrab = true;
     [SerializeField]
@@ -109,20 +112,37 @@ public class OVRGrabbable : MonoBehaviour
         get { return m_grabPoints; }
     }
 
-	/// <summary>
-	/// Notifies the object that it has been grabbed.
-	/// </summary>
-	virtual public void GrabBegin(OVRGrabber hand, Collider grabPoint)
+    /// <summary>
+    /// Notifies the object that it has been grabbed.
+    /// </summary>
+    virtual public void GrabBegin(OVRGrabber hand, Collider grabPoint)
     {
         m_grabbedBy = hand;
         m_grabbedCollider = grabPoint;
+        /*Collider handPos = hand.GetComponentInChildren<Collider>();
+        grabPoint.gameObject.gameObject.transform.position = handPos.transform.position;
+        grabPoint.gameObject.gameObject.transform.localEulerAngles = PickRotation;*/
         gameObject.GetComponent<Rigidbody>().isKinematic = true;
+        /*Vector3 offset = new Vector3(0, 1, 0);
+        //grabPoint.gameObject.transform.localPosition = hand.transform.position + offset;
+        grabPoint.transform.parent = hand.transform;
+        Vector3 handPosition = hand.transform.localPosition + offset;
+        Vector3 weaponGrab = transform.localScale;
+        PickPosition.Scale(weaponGrab);
+        //PickRotation.Scale(weaponGrab);
+        handPosition.Scale(weaponGrab);
+        grabPoint.transform.localPosition = handPosition;
+        grabPoint.gameObject.transform.localEulerAngles = PickRotation;
+        //grabPoint.transform.localEulerAngles = PickRotation;// - hand.transform.localEulerAngles;*/
+        //grabPoint.gameObject.transform.localEulerAngles = PickRotation;
+        //OVRGrabbable[] grabPositions = grabPoint.gameObject.GetComponents<OVRGrabbable>();
+        //if (grabPoint.gameObject.GetComponentsInChildren
     }
 
-	/// <summary>
-	/// Notifies the object that it has been released.
-	/// </summary>
-	virtual public void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
+    /// <summary>
+    /// Notifies the object that it has been released.
+    /// </summary>
+    virtual public void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
     {
         Rigidbody rb = gameObject.GetComponent<Rigidbody>();
         rb.isKinematic = m_grabbedKinematic;

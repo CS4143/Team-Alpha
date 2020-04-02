@@ -10,6 +10,10 @@ public class EnemyController : MonoBehaviour
     Transform target;
     NavMeshAgent agent;
 
+    public float attackTime = 1;
+    public float currTime = 0;
+    public float health = 100f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,17 +27,43 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         float distance = Vector3.Distance(target.position, transform.position);
-        
-        if(distance <= lookRadius){
+        if(health > 0)
+        {
+            if (distance <= lookRadius)
+            {
+                Vector3 playerPosition = target.localPosition;
+                //playerPosition.x += 180;
+                playerPosition.y = 0;
+                transform.LookAt(playerPosition);
+                //transform.rotation = Quaternion.Euler(0, 180f, 0);
+                print("Player in Range!!!!!!!!");
+                if (distance < 1.5)
+                {
+                    print("Attacking Player");
 
-            print("Player in Range!!!!!!!!");
-            if(distance < 0.75){
-                print("Attacking Player");
-            }
-            else{
-                transform.position = Vector3.MoveTowards(transform.position, target.transform.position, 0.015f);
+                    currTime += Time.deltaTime;
+                    print(currTime);
+                    //if()
+                    if (currTime >= attackTime)
+                    {
+                        Attack();
+                    }
+
+                }
+                else
+                {
+                    Vector3 targetPos = target.transform.position;
+                    targetPos.y = 0;
+                    transform.position = Vector3.MoveTowards(transform.position, targetPos, 0.015f);
+                }
             }
         }
+        else
+        {
+            print("I am no longer alive");
+        }
+        
+        //else do death
     }
 
     void OnDrawGizmosSelected(){
@@ -43,4 +73,24 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        currTime = -1;
+    }
+
+    void Attack(){
+        print("Player took damage");
+        currTime = 0;
+    }
+
+    //Return true if enemy still has health
+    bool hasHealth()
+    {
+        bool health = false;
+        if(GetComponent<EnemyController>().health > 0)
+        {
+            health = true;
+        }
+        return health;
+    }
 }
