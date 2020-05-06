@@ -37,4 +37,11 @@ public class Player : MonoBehaviour
         healthBar.SetHealth(currentHealth);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.GetComponentInParent<EnemyController>() != null)
+        {
+            currentHealth -= 10;
+        }
+    }
 }

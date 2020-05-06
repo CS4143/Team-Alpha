@@ -1,24 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
 
-    public float lookRadius = 10f;
+    public float lookRadius = 20f;
     Transform target;
     NavMeshAgent agent;
 
+    //static int totalEnemies;
     public float attackTime = 1;
     public float currTime = 0;
     public float health = 100f;
+    private float time = 0f;
+
+    private Animator anim;
 
     // Start is called before the first frame update
     void Start()
     {
+        //totalEnemies++;
+        time = 0f;
         target = Player.instance.player.transform;
         agent = GetComponent<NavMeshAgent>();
+
+        anim = GetComponentInChildren<Animator>();
+        anim.SetBool("Alive", true);
+
         print(target);
         print(agent);
     }
@@ -26,8 +34,9 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    
         float distance = Vector3.Distance(target.position, transform.position);
-        if(health > 0)
+        if (health > 0)
         {
             if (distance <= lookRadius)
             {
@@ -36,9 +45,11 @@ public class EnemyController : MonoBehaviour
                 playerPosition.y = 0;
                 transform.LookAt(playerPosition);
                 //transform.rotation = Quaternion.Euler(0, 180f, 0);
-                print("Player in Range!!!!!!!!");
-                if (distance < 1.5)
+                //print("Player in Range!!!!!!!!");
+                print("health is: " + health);
+                if (distance < 1.9)
                 {
+                    anim.SetBool("InRange", true);
                     print("Attacking Player");
 
                     currTime += Time.deltaTime;
@@ -52,16 +63,21 @@ public class EnemyController : MonoBehaviour
                 }
                 else
                 {
+                    anim.SetBool("InRange", false);
+                    anim.SetBool("IsWalking", true);
                     Vector3 targetPos = target.transform.position;
-                    targetPos.y = 0;
-                    transform.position = Vector3.MoveTowards(transform.position, targetPos, 0.015f);
+                    targetPos.y = .170f;
+                    transform.position = Vector3.MoveTowards(transform.position, targetPos, 0.010f);
                 }
             }
         }
         else
         {
+            anim.SetBool("Alive", false);
             print("I am no longer alive");
+            Destroy(this.gameObject, 3.0f);
         }
+        
         
         //else do death
     }
